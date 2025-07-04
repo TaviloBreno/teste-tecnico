@@ -12,10 +12,12 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('parcelas', function (Blueprint $table) {
-            $table->foreignId('venda_id')->constrained();
+            $table->id();
+            $table->foreignId('venda_id')->constrained()->onDelete('cascade');
             $table->date('vencimento');
             $table->decimal('valor', 10, 2);
             $table->boolean('paga')->default(false);
+            $table->timestamps();
         });
     }
 
