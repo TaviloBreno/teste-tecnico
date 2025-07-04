@@ -15,6 +15,22 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
+                        {{ __('Clientes') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('produtos.index')" :active="request()->routeIs('produtos.*')">
+                        {{ __('Produtos') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('vendas.index')" :active="request()->routeIs('vendas.*')">
+                        {{ __('Vendas') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('forma-pagamentos.index')" :active="request()->routeIs('forma-pagamentos.*')">
+                        {{ __('Formas de Pagamento') }}
+                    </x-nav-link>
                 </div>
             </div>
 
@@ -69,6 +85,22 @@
         <div class="pt-2 pb-3 space-y-1">
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')">
+                {{ __('Clientes') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('produtos.index')" :active="request()->routeIs('produtos.*')">
+                {{ __('Produtos') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('vendas.index')" :active="request()->routeIs('vendas.*')">
+                {{ __('Vendas') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('forma-pagamentos.index')" :active="request()->routeIs('forma-pagamentos.*')">
+                {{ __('Formas de Pagamento') }}
             </x-responsive-nav-link>
         </div>
 
