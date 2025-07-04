@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Produto;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
+use App\Services\ProdutoService;
 
 class ProdutoController extends Controller
 {
-    public function index()
+    public function index(ProdutoService $produtoService)
     {
-        $produtos = Produto::orderBy('nome')->paginate(10);
+        $produtos = $produtoService->listarProdutos();
         return view('produtos.index', compact('produtos'));
     }
 
@@ -19,10 +20,15 @@ class ProdutoController extends Controller
         return view('produtos.create');
     }
 
-    public function store(StoreProdutoRequest $request)
+    public function store(StoreProdutoRequest $request, ProdutoService $produtoService)
     {
-        Produto::create($request->validated());
+        $produtoService->criarProduto($request->validated());
         return redirect()->route('produtos.index')->with('success', 'Produto cadastrado com sucesso!');
+    }
+
+    public function show(Produto $produto)
+    {
+        return view('produtos.show', compact('produto'));
     }
 
     public function edit(Produto $produto)
@@ -30,15 +36,15 @@ class ProdutoController extends Controller
         return view('produtos.edit', compact('produto'));
     }
 
-    public function update(UpdateProdutoRequest $request, Produto $produto)
+    public function update(UpdateProdutoRequest $request, Produto $produto, ProdutoService $produtoService)
     {
-        $produto->update($request->validated());
+        $produtoService->atualizarProduto($produto, $request->validated());
         return redirect()->route('produtos.index')->with('success', 'Produto atualizado com sucesso!');
     }
 
-    public function destroy(Produto $produto)
+    public function destroy(Produto $produto, ProdutoService $produtoService)
     {
-        $produto->delete();
-        return redirect()->route('produtos.index')->with('success', 'Produto removido com sucesso!');
+        $produtoService->excluirProduto($produto);
+        return redirect()->route('produtos.index')->with('success', 'Produto excluído com sucesso!');
     }
 }
