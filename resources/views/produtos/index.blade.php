@@ -8,10 +8,17 @@
     <div class="py-12 bg-gray-100 min-h-screen">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-10">
 
+            <!-- Mensagem de sucesso -->
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-300 text-green-800 px-6 py-3 rounded-lg shadow text-sm font-semibold">
+                    {{ session('success') }}
+                </div>
+            @endif
+
             <!-- Filtro e Botão Novo Produto -->
             <div class="flex flex-row items-center justify-between gap-4 mb-6">
                 <form method="GET" class="flex flex-row flex-1 max-w-md">
-                    <input type="text" name="busca" value="{{ $busca }}" placeholder="Buscar produto..."
+                    <input type="text" name="busca" value="{{ $busca ?? '' }}" placeholder="Buscar produto..."
                         class="w-full px-4 py-2 border border-gray-300 rounded-lg text-sm shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition" />
                     <button type="submit"
                         class="ml-2 bg-indigo-600 text-white px-5 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-700 shadow transition">
@@ -46,15 +53,22 @@
                                 <td class="px-6 py-4 text-sm text-gray-700">R$ {{ number_format($produto->preco, 2, ',', '.') }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $produto->estoque }}</td>
                                 <td class="px-6 py-4 text-sm text-right">
-                                    <a href="{{ route('produtos.edit', $produto) }}"
-                                        class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M11 5h10M5 13l4 4L19 7" />
-                                        </svg>
-                                        Editar
-                                    </a>
+                                    <div class="flex justify-end items-center gap-3">
+                                        <a href="{{ route('produtos.edit', $produto) }}"
+                                            class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-semibold">
+                                            ✏️ Editar
+                                        </a>
+
+                                        <form action="{{ route('produtos.destroy', $produto) }}" method="POST"
+                                              onsubmit="return confirm('Tem certeza que deseja excluir este produto?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                    class="inline-flex items-center gap-1 text-red-600 hover:text-red-800 text-sm font-semibold">
+                                                🗑️ Excluir
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                             </tr>
                         @empty
@@ -69,7 +83,7 @@
 
                 <!-- Paginação -->
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                    {{ $produtos->appends(['busca' => $busca])->links() }}
+                    {{ $produtos->appends(['busca' => $busca ?? ''])->links() }}
                 </div>
             </div>
         </div>
