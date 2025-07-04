@@ -5,6 +5,7 @@ use App\Http\Controllers\ProdutoController;
 use App\Http\Controllers\VendaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ParcelaController;
+use App\Http\Controllers\ItemVendaController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/vendas/{venda}/pdf', [VendaController::class, 'downloadPdf'])->name('vendas.pdf');
 
     Route::resource('parcelas', ParcelaController::class)->except(['create', 'store', 'show']);
+
+    Route::resource('itens-venda', ItemVendaController::class)->only(['store', 'edit', 'update', 'destroy']);
 });
 
 
