@@ -26,6 +26,7 @@
                         <tr>
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Cliente</th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Data</th>
+                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Parcelas</th>
                             <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Total</th>
                             <th class="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">Ações</th>
                         </tr>
@@ -35,6 +36,13 @@
                             <tr class="hover:bg-indigo-50 transition">
                                 <td class="px-6 py-4 text-sm text-gray-900">{{ $venda->cliente->nome }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $venda->created_at->format('d/m/Y') }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">
+                                    @if ($venda->parcelas->count() > 0)
+                                        {{ $venda->parcelas->count() }} {{ Str::plural('parcela', $venda->parcelas->count()) }}
+                                    @else
+                                        Sem parcelas
+                                    @endif
+                                </td>
                                 <td class="px-6 py-4 text-sm text-gray-700">R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</td>
                                 <td class="px-6 py-4 text-sm text-right">
                                     <a href="{{ route('vendas.show', $venda) }}"
