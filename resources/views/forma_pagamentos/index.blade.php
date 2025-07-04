@@ -83,8 +83,9 @@
 
             <!-- Paginação -->
             <div class="mt-4">
-                {{ $vendas->links() }}
+                {{ $formasPagamento->links() }}
             </div>
+
 
         </div>
     </div>
