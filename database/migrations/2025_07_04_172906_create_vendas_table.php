@@ -13,19 +13,21 @@ return new class extends Migration
 
             $table->foreignId('user_id')
                 ->constrained()
-                ->onDelete('cascade'); // Exclui vendas se o usuário for removido
+                ->onDelete('cascade');
 
             $table->foreignId('cliente_id')
                 ->nullable()
                 ->constrained()
-                ->nullOnDelete(); // Cliente opcional; se excluído, cliente_id = null
+                ->nullOnDelete();
 
             $table->foreignId('forma_pagamento_id')
                 ->nullable()
                 ->constrained()
-                ->nullOnDelete(); // Caso forma de pagamento seja removida
+                ->nullOnDelete();
 
             $table->decimal('valor_total', 10, 2);
+
+            $table->date('data'); // <--- Adicionada aqui
 
             $table->timestamps();
         });

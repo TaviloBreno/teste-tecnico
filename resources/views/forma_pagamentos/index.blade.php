@@ -33,7 +33,7 @@
                             <tr class="hover:bg-indigo-50 transition">
                                 <td class="px-6 py-4 text-sm text-gray-900">{{ $forma->nome }}</td>
                                 <td class="px-6 py-4 text-sm text-right">
-                                    <a href="{{ route('formas_pagamento.edit', $forma) }}"
+                                    <a href="{{ route('forma-pagamentos.edit', $forma) }}"
                                        class="text-blue-600 hover:text-blue-800 font-semibold text-sm">Editar</a>
                                 </td>
                             </tr>

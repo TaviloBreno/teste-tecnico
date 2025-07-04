@@ -37,11 +37,14 @@ class VendaItemSeeder extends Seeder
                     'subtotal' => $subtotal,
                 ]);
 
+                // Atualiza o estoque do produto
+                $produto->decrement('estoque', $quantidade);
+
                 $totalVenda += $subtotal;
             }
 
-            // Atualiza o total da venda
-            $venda->update(['total' => $totalVenda]);
+            // Atualiza o valor total da venda
+            $venda->update(['valor_total' => $totalVenda]);
         }
     }
 }
