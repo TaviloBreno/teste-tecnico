@@ -12,8 +12,10 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('parcelas', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
+            $table->foreignId('venda_id')->constrained();
+            $table->date('vencimento');
+            $table->decimal('valor', 10, 2);
+            $table->boolean('paga')->default(false);
         });
     }
 
