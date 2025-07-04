@@ -31,12 +31,11 @@ class ClienteController extends Controller
         return view('clientes.create');
     }
 
-    public function store(StoreClienteRequest $request, ClienteService $clienteService)
+    public function store(StoreClienteRequest $request)
     {
-        $clienteService->criarCliente($request->validated());
+        Cliente::create($request->validated());
 
-        return redirect()->route('clientes.index')
-            ->with('success', 'Cliente cadastrado com sucesso!');
+        return redirect()->route('clientes.index')->with('success', 'Cliente cadastrado com sucesso!');
     }
 
     public function edit(Cliente $cliente)
