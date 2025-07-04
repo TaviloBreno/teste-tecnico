@@ -10,7 +10,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\FormaPagamentoController;
 
 Route::get('/', function () {
-    return view('welcome');
+    return redirect()->route('login');
 });
 
 Route::get('/dashboard', function () {
