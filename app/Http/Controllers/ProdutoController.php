@@ -6,13 +6,19 @@ use App\Models\Produto;
 use App\Http\Requests\StoreProdutoRequest;
 use App\Http\Requests\UpdateProdutoRequest;
 use App\Services\ProdutoService;
+use Illuminate\Http\Request;
 
 class ProdutoController extends Controller
 {
-    public function index(ProdutoService $produtoService)
+    public function index(Request $request)
     {
-        $produtos = $produtoService->listarProdutos();
-        return view('produtos.index', compact('produtos'));
+        $busca = $request->input('busca');
+
+        $produtos = Produto::when($busca, function ($query, $busca) {
+            return $query->where('nome', 'like', "%{$busca}%");
+        })->paginate(10);
+
+        return view('produtos.index', compact('produtos', 'busca'));
     }
 
     public function create()
