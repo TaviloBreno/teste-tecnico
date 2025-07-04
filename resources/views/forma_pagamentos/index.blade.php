@@ -82,9 +82,10 @@
 
 
             <!-- Paginação -->
-            <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
-                {{ $formasPagamento->links() }}
+            <div class="mt-4">
+                {{ $vendas->links() }}
             </div>
+
         </div>
     </div>
     </div>

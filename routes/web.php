@@ -9,6 +9,7 @@ use App\Http\Controllers\ItemVendaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\FormaPagamentoController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\RelatorioController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -37,9 +38,13 @@ Route::middleware('auth')->group(function () {
     Route::resource('clientes', ClienteController::class);
 
     Route::resource('forma-pagamentos', FormaPagamentoController::class);
+
+    Route::get('/relatorios', [RelatorioController::class, 'index'])->name('relatorios.index');
+    Route::get('/relatorios/vendas/pdf', [RelatorioController::class, 'vendasPdf'])->name('relatorios.vendas.pdf');
+    Route::get('/relatorios/vendas/csv', [RelatorioController::class, 'vendasCsv'])->name('relatorios.vendas.csv');
 });
 
 
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
