@@ -51,14 +51,8 @@ class VendaController extends Controller
                 return back()->withErrors(['itens' => 'Selecione ao menos um produto com quantidade válida.'])->withInput();
             }
 
-            // Filtrar e reindexar parcelas válidas
-            $dados['parcelas'] = array_values(array_filter($dados['parcelas'], function ($parcela) {
-                return isset($parcela['valor']) && isset($parcela['vencimento']);
-            }));
-
-            if (empty($dados['parcelas'])) {
-                return back()->withErrors(['parcelas' => 'Defina ao menos uma parcela válida.'])->withInput();
-            }
+            // Renomear a chave 'quantidade_parcelas' para 'parcelas'
+            $dados['parcelas'] = $dados['quantidade_parcelas'];
 
             $venda = $vendaService->criarVenda($dados);
 

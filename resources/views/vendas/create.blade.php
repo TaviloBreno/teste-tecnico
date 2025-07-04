@@ -9,6 +9,7 @@
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white shadow-xl rounded-lg p-8 space-y-8">
 
+                {{-- Mensagens de erro --}}
                 @if ($errors->any())
                     <div class="bg-red-100 border border-red-300 text-red-700 px-4 py-3 rounded text-sm">
                         <strong>Erro:</strong> Corrija os campos abaixo:
@@ -23,7 +24,7 @@
                 <form method="POST" action="{{ route('vendas.store') }}">
                     @csrf
 
-                    <!-- Cliente -->
+                    {{-- Cliente --}}
                     <div>
                         <label for="cliente_id" class="block text-sm font-medium text-gray-700 mb-1">Cliente</label>
                         <select name="cliente_id" id="cliente_id"
@@ -37,7 +38,7 @@
                         </select>
                     </div>
 
-                    <!-- Data da Venda -->
+                    {{-- Data da venda --}}
                     <div>
                         <label for="data" class="block text-sm font-medium text-gray-700 mb-1">Data da Venda <span class="text-red-500">*</span></label>
                         <input type="date" name="data" id="data"
@@ -45,7 +46,7 @@
                             value="{{ old('data', date('Y-m-d')) }}" required>
                     </div>
 
-                    <!-- Forma de Pagamento -->
+                    {{-- Forma de pagamento --}}
                     <div>
                         <label for="forma_pagamento_id" class="block text-sm font-medium text-gray-700 mb-1">Forma de Pagamento <span class="text-red-500">*</span></label>
                         <select name="forma_pagamento_id" id="forma_pagamento_id"
@@ -60,15 +61,15 @@
                         </select>
                     </div>
 
-                    <!-- Número de Parcelas -->
+                    {{-- Quantidade de parcelas --}}
                     <div>
-                        <label for="parcelas" class="block text-sm font-medium text-gray-700 mb-1">Número de Parcelas <span class="text-red-500">*</span></label>
-                        <input type="number" name="parcelas" id="parcelas"
+                        <label for="quantidade_parcelas" class="block text-sm font-medium text-gray-700 mb-1">Número de Parcelas <span class="text-red-500">*</span></label>
+                        <input type="number" name="quantidade_parcelas" id="quantidade_parcelas"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                            value="{{ old('parcelas', 1) }}" min="1" max="60" required>
+                            value="{{ old('quantidade_parcelas', 1) }}" min="1" max="60" required>
                     </div>
 
-                    <!-- Produtos e Quantidade -->
+                    {{-- Produtos --}}
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-2">Produtos <span class="text-red-500">*</span></label>
                         <div class="overflow-x-auto">
@@ -108,7 +109,7 @@
                         <span class="text-xs text-gray-500 mt-1 block">Selecione ao menos um produto e informe a quantidade.</span>
                     </div>
 
-                    <!-- Botões -->
+                    {{-- Botões --}}
                     <div class="flex justify-end gap-3 mt-8">
                         <a href="{{ route('vendas.index') }}"
                            class="inline-flex items-center px-4 py-2 bg-gray-200 hover:bg-gray-300 text-gray-700 rounded-md text-sm font-medium transition">
