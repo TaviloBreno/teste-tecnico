@@ -6,6 +6,7 @@ use App\Http\Controllers\VendaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ParcelaController;
 use App\Http\Controllers\ItemVendaController;
+use App\Http\Controllers\ClienteController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -30,6 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('parcelas', ParcelaController::class)->except(['create', 'store', 'show']);
 
     Route::resource('itens-venda', ItemVendaController::class)->only(['store', 'edit', 'update', 'destroy']);
+
+    Route::resource('clientes', ClienteController::class);
 });
 
 
