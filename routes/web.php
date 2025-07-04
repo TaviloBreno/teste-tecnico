@@ -8,14 +8,15 @@ use App\Http\Controllers\ParcelaController;
 use App\Http\Controllers\ItemVendaController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\FormaPagamentoController;
+use App\Http\Controllers\DashboardController;
 
 Route::get('/', function () {
     return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('dashboard');
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
