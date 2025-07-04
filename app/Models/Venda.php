@@ -14,10 +14,12 @@ class Venda extends Model
         'cliente_id',
         'forma_pagamento_id',
         'valor_total',
+        'data',
     ];
 
     protected $casts = [
         'valor_total' => 'decimal:2',
+        'data' => 'date',
     ];
 
     // ───────────────────────────────────────────────

@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-2xl text-gray-900 leading-tight tracking-tight">
-            Nova Venda
+            Editar Venda #{{ $venda->id }}
         </h2>
     </x-slot>
 
@@ -20,8 +20,9 @@
                     </div>
                 @endif
 
-                <form method="POST" action="{{ route('vendas.store') }}">
+                <form method="POST" action="{{ route('vendas.update', $venda) }}">
                     @csrf
+                    @method('PUT')
 
                     <!-- Cliente -->
                     <div>
@@ -30,7 +31,7 @@
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm">
                             <option value="">Selecione um cliente (opcional)</option>
                             @foreach ($clientes as $cliente)
-                                <option value="{{ $cliente->id }}" {{ old('cliente_id') == $cliente->id ? 'selected' : '' }}>
+                                <option value="{{ $cliente->id }}" {{ (old('cliente_id') ?? $venda->cliente_id) == $cliente->id ? 'selected' : '' }}>
                                     {{ $cliente->nome }}
                                 </option>
                             @endforeach
@@ -42,7 +43,7 @@
                         <label for="data" class="block text-sm font-medium text-gray-700 mb-1">Data da Venda <span class="text-red-500">*</span></label>
                         <input type="date" name="data" id="data"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                            value="{{ old('data', date('Y-m-d')) }}" required>
+                            value="{{ old('data', $venda->data?->format('Y-m-d')) }}" required>
                     </div>
 
                     <!-- Forma de Pagamento -->
@@ -53,7 +54,7 @@
                             required>
                             <option value="">Selecione uma forma de pagamento</option>
                             @foreach ($formasPagamento as $forma)
-                                <option value="{{ $forma->id }}" {{ old('forma_pagamento_id') == $forma->id ? 'selected' : '' }}>
+                                <option value="{{ $forma->id }}" {{ (old('forma_pagamento_id') ?? $venda->forma_pagamento_id) == $forma->id ? 'selected' : '' }}>
                                     {{ $forma->nome }}
                                 </option>
                             @endforeach
@@ -65,7 +66,7 @@
                         <label for="parcelas" class="block text-sm font-medium text-gray-700 mb-1">Número de Parcelas <span class="text-red-500">*</span></label>
                         <input type="number" name="parcelas" id="parcelas"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                            value="{{ old('parcelas', 1) }}" min="1" max="60" required>
+                            value="{{ old('parcelas', $venda->parcelas->count()) }}" min="1" max="60" required>
                     </div>
 
                     <!-- Produtos e Quantidade -->
@@ -84,20 +85,27 @@
                                 </thead>
                                 <tbody>
                                     @foreach ($produtos as $index => $produto)
+                                        @php
+                                            $itemVenda = $venda->itens->firstWhere('produto_id', $produto->id);
+                                            $quantidadeAtual = $itemVenda ? $itemVenda->quantidade : 0;
+                                            $selecionado = $quantidadeAtual > 0;
+                                        @endphp
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-2 py-2">
                                                 <input type="checkbox" name="produtos_selecionados[]" value="{{ $produto->id }}"
                                                     class="rounded text-indigo-600 focus:ring-indigo-500"
+                                                    {{ $selecionado ? 'checked' : '' }}
                                                     onchange="toggleProduto({{ $index }}, {{ $produto->id }})">
                                             </td>
                                             <td class="px-2 py-2 text-gray-800">{{ $produto->nome }}</td>
                                             <td class="px-2 py-2 text-gray-600">R$ {{ number_format($produto->preco, 2, ',', '.') }}</td>
-                                            <td class="px-2 py-2 text-gray-600">{{ $produto->estoque }}</td>
+                                            <td class="px-2 py-2 text-gray-600">{{ $produto->estoque + $quantidadeAtual }}</td>
                                             <td class="px-2 py-2">
                                                 <input type="number" name="itens[{{ $index }}][quantidade]"
                                                     class="w-24 border rounded px-2 py-1 text-sm"
-                                                    placeholder="Qtd" min="1" max="{{ $produto->estoque }}"
-                                                    disabled id="quantidade_{{ $index }}">
+                                                    placeholder="Qtd" min="1" max="{{ $produto->estoque + $quantidadeAtual }}"
+                                                    value="{{ $quantidadeAtual > 0 ? $quantidadeAtual : '' }}"
+                                                    {{ $selecionado ? '' : 'disabled' }} id="quantidade_{{ $index }}">
                                                 <input type="hidden" name="itens[{{ $index }}][produto_id]" value="{{ $produto->id }}">
                                             </td>
                                         </tr>
@@ -116,7 +124,7 @@
                         </a>
                         <button type="submit"
                             class="inline-flex items-center px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white rounded-md text-sm font-semibold transition">
-                            Finalizar Venda
+                            Atualizar Venda
                         </button>
                     </div>
                 </form>
@@ -133,7 +141,9 @@
             if (checkbox.checked) {
                 quantidadeInput.disabled = false;
                 quantidadeInput.required = true;
-                quantidadeInput.value = '1';
+                if (!quantidadeInput.value) {
+                    quantidadeInput.value = '1';
+                }
             } else {
                 quantidadeInput.disabled = true;
                 quantidadeInput.required = false;

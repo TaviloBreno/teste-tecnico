@@ -12,10 +12,12 @@ class Produto extends Model
     protected $fillable = [
         'nome',
         'preco',
+        'estoque',
     ];
 
     protected $casts = [
         'preco' => 'decimal:2',
+        'estoque' => 'integer',
     ];
 
     // ───────────────────────────────────────────────

@@ -39,9 +39,34 @@ class VendaController extends Controller
 
     public function store(StoreVendaRequest $request, VendaService $vendaService)
     {
-        $venda = $vendaService->criarVenda($request->validated());
+        try {
+            $dados = $request->validated();
 
-        return redirect()->route('vendas.index')->with('success', 'Venda criada com sucesso!');
+            // Filtrar e reindexar produtos válidos
+            $dados['itens'] = array_values(array_filter($dados['itens'], function ($item) {
+                return isset($item['quantidade']) && $item['quantidade'] > 0;
+            }));
+
+            if (empty($dados['itens'])) {
+                return back()->withErrors(['itens' => 'Selecione ao menos um produto com quantidade válida.'])->withInput();
+            }
+
+            // Filtrar e reindexar parcelas válidas
+            $dados['parcelas'] = array_values(array_filter($dados['parcelas'], function ($parcela) {
+                return isset($parcela['valor']) && isset($parcela['vencimento']);
+            }));
+
+            if (empty($dados['parcelas'])) {
+                return back()->withErrors(['parcelas' => 'Defina ao menos uma parcela válida.'])->withInput();
+            }
+
+            $venda = $vendaService->criarVenda($dados);
+
+            return redirect()->route('vendas.index')->with('success', 'Venda criada com sucesso!');
+        } catch (\Throwable $e) {
+            report($e);
+            return back()->withErrors(['error' => 'Erro ao salvar venda: ' . $e->getMessage()])->withInput();
+        }
     }
 
     public function show(Venda $venda)
@@ -56,33 +81,41 @@ class VendaController extends Controller
         $produtos = Produto::all();
         $formasPagamento = FormaPagamento::all();
 
-        $venda->load('itens');
+        $venda->loadMissing(['itens.produto', 'parcelas']);
 
         return view('vendas.edit', compact('venda', 'clientes', 'produtos', 'formasPagamento'));
     }
 
     public function update(UpdateVendaRequest $request, Venda $venda, VendaService $vendaService)
     {
-        $vendaService->atualizarVenda($venda, $request->validated());
+        try {
+            $dados = $request->validated();
 
-        return redirect()->route('vendas.index')->with('success', 'Venda atualizada com sucesso!');
+            $dados['itens'] = array_values(array_filter($dados['itens'], function ($item) {
+                return isset($item['quantidade']) && $item['quantidade'] > 0;
+            }));
+
+            $dados['parcelas'] = array_values(array_filter($dados['parcelas'], function ($parcela) {
+                return isset($parcela['valor']) && isset($parcela['vencimento']);
+            }));
+
+            $vendaService->atualizarVenda($venda, $dados);
+
+            return redirect()->route('vendas.index')->with('success', 'Venda atualizada com sucesso!');
+        } catch (\Throwable $e) {
+            report($e);
+            return back()->withErrors(['error' => 'Erro ao atualizar venda: ' . $e->getMessage()])->withInput();
+        }
     }
 
     public function destroy(Venda $venda)
     {
-        $venda->parcelas()->delete();
-        $venda->itens()->delete();
-        $venda->delete();
+        if ($venda->exists()) {
+            $venda->parcelas()->delete();
+            $venda->itens()->delete();
+            $venda->delete();
+        }
 
         return redirect()->route('vendas.index')->with('success', 'Venda excluída com sucesso!');
-    }
-
-    public function downloadPdf(Venda $venda)
-    {
-        $venda->load(['cliente', 'user', 'itens.produto', 'parcelas']);
-
-        $pdf = Pdf::loadView('vendas.pdf', compact('venda'));
-
-        return $pdf->download("venda-{$venda->id}.pdf");
     }
 }
