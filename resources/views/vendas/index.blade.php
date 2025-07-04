@@ -35,7 +35,7 @@
                             <tr class="hover:bg-indigo-50 transition">
                                 <td class="px-6 py-4 text-sm text-gray-900">{{ $venda->cliente->nome }}</td>
                                 <td class="px-6 py-4 text-sm text-gray-700">{{ $venda->created_at->format('d/m/Y') }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-700">R$ {{ number_format($venda->total, 2, ',', '.') }}</td>
+                                <td class="px-6 py-4 text-sm text-gray-700">R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</td>
                                 <td class="px-6 py-4 text-sm text-right">
                                     <a href="{{ route('vendas.show', $venda) }}"
                                        class="text-blue-600 hover:text-blue-800 font-semibold text-sm">Ver</a>
