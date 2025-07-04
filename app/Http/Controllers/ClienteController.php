@@ -8,13 +8,22 @@ use App\Models\Cliente;
 use App\Http\Requests\StoreClienteRequest;
 use App\Http\Requests\UpdateClienteRequest;
 use App\Services\ClienteService;
+use Illuminate\Http\Request;
 
 class ClienteController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $clientes = Cliente::orderBy('nome')->paginate(10);
-        return view('clientes.index', compact('clientes'));
+        $busca = $request->input('busca');
+
+        $clientes = Cliente::when($busca, function ($query, $busca) {
+            $query->where('nome', 'like', "%$busca%")
+                ->orWhere('email', 'like', "%$busca%");
+        })
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return view('clientes.index', compact('clientes', 'busca'));
     }
 
     public function create()
@@ -27,7 +36,7 @@ class ClienteController extends Controller
         $clienteService->criarCliente($request->validated());
 
         return redirect()->route('clientes.index')
-                         ->with('success', 'Cliente cadastrado com sucesso!');
+            ->with('success', 'Cliente cadastrado com sucesso!');
     }
 
     public function edit(Cliente $cliente)
@@ -40,7 +49,7 @@ class ClienteController extends Controller
         $clienteService->atualizarCliente($cliente, $request->validated());
 
         return redirect()->route('clientes.index')
-                         ->with('success', 'Cliente atualizado com sucesso!');
+            ->with('success', 'Cliente atualizado com sucesso!');
     }
 
     public function destroy(Cliente $cliente, ClienteService $clienteService)
@@ -48,7 +57,6 @@ class ClienteController extends Controller
         $clienteService->excluirCliente($cliente);
 
         return redirect()->route('clientes.index')
-                         ->with('success', 'Cliente removido com sucesso!');
+            ->with('success', 'Cliente removido com sucesso!');
     }
 }
-
