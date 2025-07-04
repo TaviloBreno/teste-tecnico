@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ParcelaController;
 use App\Http\Controllers\ItemVendaController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\FormaPagamentoController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -33,6 +34,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('itens-venda', ItemVendaController::class)->only(['store', 'edit', 'update', 'destroy']);
 
     Route::resource('clientes', ClienteController::class);
+
+    Route::resource('forma-pagamentos', FormaPagamentoController::class);
 });
 
 
