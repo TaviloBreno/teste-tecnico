@@ -28,44 +28,69 @@
                 </a>
             </div>
 
-            <!-- Tabela de Clientes -->
+            <!-- Tabela de Clientes Melhorada -->
             <div class="bg-white shadow-xl rounded-lg overflow-hidden">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-indigo-100">
-                        <tr>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Nome</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Email</th>
-                            <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Telefone</th>
-                            <th class="px-6 py-4 text-right text-xs font-bold text-gray-700 uppercase tracking-wider">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-100">
-                        @forelse ($clientes as $cliente)
-                            <tr class="hover:bg-indigo-50 transition">
-                                <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ $cliente->nome }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-700">{{ $cliente->email }}</td>
-                                <td class="px-6 py-4 text-sm text-gray-700">{{ $cliente->telefone }}</td>
-                                <td class="px-6 py-4 text-sm text-right">
-                                    <a href="{{ route('clientes.edit', $cliente) }}"
-                                        class="inline-flex items-center gap-1 text-blue-600 hover:text-blue-800 text-sm font-semibold">
-                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2"
-                                            viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round"
-                                                d="M11 5h10M5 13l4 4L19 7" />
-                                        </svg>
-                                        Editar
-                                    </a>
-                                </td>
-                            </tr>
-                        @empty
+                <div class="overflow-x-auto">
+                    <table class="min-w-full divide-y divide-gray-200">
+                        <thead class="bg-gray-50">
                             <tr>
-                                <td colspan="4" class="px-6 py-6 text-sm text-gray-500 text-center">
-                                    Nenhum cliente encontrado.
-                                </td>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Nome
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Email
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Telefone
+                                </th>
+                                <th scope="col" class="px-6 py-3 text-center text-xs font-bold text-gray-700 uppercase tracking-wider">
+                                    Ações
+                                </th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody class="bg-white divide-y divide-gray-100">
+                            @forelse ($clientes as $cliente)
+                                <tr class="hover:bg-indigo-50 transition">
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $cliente->nome }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $cliente->email }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                        {{ $cliente->telefone }}
+                                    </td>
+                                    <td class="px-6 py-4 whitespace-nowrap text-center">
+                                        <a href="{{ route('clientes.edit', $cliente) }}"
+                                            class="inline-flex items-center px-3 py-1.5 bg-indigo-600 text-white text-xs font-semibold rounded hover:bg-indigo-700 transition shadow">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m-2 2h6" />
+                                            </svg>
+                                            Editar
+                                        </a>
+                                        <form action="{{ route('clientes.destroy', $cliente) }}" method="POST" class="inline-block" onsubmit="return confirm('Tem certeza que deseja excluir este cliente?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="inline-flex items-center px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded hover:bg-red-700 transition shadow">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                                                </svg>
+                                                Excluir
+                                            </button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="4" class="px-6 py-4 text-center text-gray-400">Nenhum cliente encontrado.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
 
                 <!-- Paginação -->
                 <div class="px-6 py-4 bg-gray-50 border-t border-gray-100">
