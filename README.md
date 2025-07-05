@@ -36,6 +36,13 @@ Um sistema web completo e moderno para **gestão de vendas**, com controle de cl
 
 ## ⚙️ Instalação e Uso Local
 
+### 0️⃣ Pré-requisitos
+
+Certifique-se de ter o **PHP 8.3+** e o **Composer** instalados em sua máquina.
+
+- [Como instalar o PHP](https://www.php.net/manual/pt_BR/install.php)
+- [Como instalar o Composer](https://getcomposer.org/download/)
+
 ### 1️⃣ Clone o projeto e instale as dependências
 
 ```bash
@@ -47,6 +54,7 @@ composer install
 
 # Instalar dependências JS/CSS
 npm install && npm run dev
+```
 
 ### 2️⃣ Configure o ambiente
 
