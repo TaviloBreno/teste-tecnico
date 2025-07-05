@@ -6,8 +6,18 @@ Um sistema web completo e moderno para **gestão de vendas**, com controle de cl
 
 ## 🚀 Funcionalidades Principais
 
+### 💼 **Evita Erros Comuns de Desenvolvimento**
+- ✅ **Persistência robusta**: Salva corretamente no banco com transações
+- ✅ **Migrations completas**: Estrutura de banco versionada e consistente
+- ✅ **Relacionamentos corretos**: Parcelas ligadas às vendas (não vendas separadas)
+- ✅ **Listagem de clientes**: CRUD completo com busca e paginação
+- ✅ **Relacionamentos ORM**: Cliente ligado à venda com `belongsTo`
+- ✅ **Cálculos precisos**: Parcelas calculadas com ajuste de arredondamento
+- ✅ **Reatividade total**: Mudanças de quantidade/itens atualizam total e parcelas automaticamente
+
+### 🎯 **Funcionalidades do Sistema**
 - ✅ Cadastro e gerenciamento de **clientes**
-- ✅ CRUD completo de **produtos**
+- ✅ CRUD completo de **produtos com controle de estoque**
 - ✅ Registro de **vendas com parcelamento personalizado**
 - ✅ Cálculo automático e edição manual de **valores de parcelas**
 - ✅ Controle de **formas de pagamento**
@@ -92,6 +102,35 @@ Acesse em: [http://localhost:8000](http://localhost:8000)
 - 📈 **Dashboard** com gráficos de vendas por período
 - 🧾 **Relatórios PDF/CSV** com filtros por data e cliente
 - 🧮 **Cálculo de parcelas** e ajuste automático de valores
+- 📋 **Gestão de estoque** com controle automático
+- 🔄 **Reatividade total** - mudanças refletem automaticamente no total
+
+---
+
+## 🛡️ **Qualidade e Boas Práticas**
+
+✅ **Evita os 7 erros mais comuns que fazem desenvolvedores perderem vagas:**
+
+1. **Salva corretamente no banco** - Usa transações e persistência adequada
+2. **Migrations organizadas** - Estrutura de banco versionada e consistente
+3. **Parcelas como entidades separadas** - Não salva parcelas como vendas
+4. **Lista clientes adequadamente** - CRUD completo e funcional
+5. **Relacionamentos ORM corretos** - Cliente ligado à venda via `belongsTo`
+6. **Cálculos precisos de parcelas** - Com arredondamento e ajuste automático
+7. **Reatividade total** - Mudanças em tempo real no total e parcelas
+
+---
+
+## 🎯 **Diferencial Técnico**
+
+- **Laravel 12.x** (versão mais atual)
+- **PHP 8.3+** com tipagem forte
+- **Transações de banco** para consistência
+- **Relacionamentos ORM** bem estruturados
+- **Validação robusta** de dados
+- **Controle de estoque** automático
+- **Interface reativa** com JavaScript vanilla
+- **Código limpo** e bem documentado
 
 ---
 
