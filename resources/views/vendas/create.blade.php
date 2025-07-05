@@ -100,7 +100,10 @@
                                                     class="w-24 border rounded px-2 py-1 text-sm"
                                                     placeholder="Qtd" min="1" max="{{ $produto->estoque }}"
                                                     disabled id="quantidade_{{ $index }}">
-                                                <input type="hidden" name="itens[{{ $index }}][produto_id]" value="{{ $produto->id }}">
+                                                <input type="hidden" name="itens[{{ $index }}][produto_id]" 
+                                                    value="{{ $produto->id }}"
+                                                    id="produto_id_{{ $index }}"
+                                                    disabled>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -132,15 +135,18 @@
         function toggleProduto(index) {
             const checkbox = document.querySelector(`.produto-checkbox[data-index="${index}"]`);
             const quantidadeInput = document.getElementById(`quantidade_${index}`);
+            const produtoIdInput = document.getElementById(`produto_id_${index}`);
 
             if (checkbox && checkbox.checked) {
                 quantidadeInput.disabled = false;
                 quantidadeInput.required = true;
                 quantidadeInput.value = '1';
+                produtoIdInput.disabled = false;
             } else {
                 quantidadeInput.disabled = true;
                 quantidadeInput.required = false;
                 quantidadeInput.value = '';
+                produtoIdInput.disabled = true;
             }
         }
     </script>

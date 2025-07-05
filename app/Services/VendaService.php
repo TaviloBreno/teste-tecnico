@@ -25,8 +25,7 @@ class VendaService
             $total = $this->processarItens($venda, $dados['itens']);
             $venda->update(['valor_total' => $total]);
 
-            $quantidadeParcelas = $dados['quantidade_parcelas'] ?? 1;
-            $this->gerarParcelas($venda, $quantidadeParcelas, $total);
+            $this->gerarParcelas($venda, $dados['parcelas'], $total);
 
             return $venda;
         });
@@ -37,6 +36,12 @@ class VendaService
         return DB::transaction(function () use ($venda, $dados) {
             $this->restaurarEstoque($venda);
             $this->validarEstoque($dados['itens']);
+
+            // Guardar parcelas originais se existirem
+            $parcelasOriginais = [];
+            if (isset($dados['parcelas']) && is_array($dados['parcelas'])) {
+                $parcelasOriginais = $dados['parcelas'];
+            }
 
             $venda->update([
                 'cliente_id' => $dados['cliente_id'] ?? null,
@@ -49,8 +54,13 @@ class VendaService
             $total = $this->processarItens($venda, $dados['itens']);
             $venda->update(['valor_total' => $total]);
 
-            $quantidadeParcelas = $dados['quantidade_parcelas'] ?? 1;
-            $this->gerarParcelas($venda, $quantidadeParcelas, $total);
+            // Se há parcelas específicas, ajustar proporcionalmente
+            if (!empty($parcelasOriginais)) {
+                $this->ajustarParcelasProporcionalmente($venda, $parcelasOriginais, $total);
+            } else {
+                // Caso contrário, usar o método padrão
+                $this->gerarParcelas($venda, $dados['parcelas'], $total);
+            }
 
             return $venda;
         });
@@ -81,7 +91,29 @@ class VendaService
         return round($total, 2);
     }
 
-    private function gerarParcelas(Venda $venda, int $quantidadeParcelas, float $total): void
+    /**
+     * Gera as parcelas da venda conforme valor total e quantidade ou array de parcelas
+     */
+    private function gerarParcelas(Venda $venda, $parcelas, float $total): void
+    {
+        // Se parcelas é um número inteiro (quantidade de parcelas)
+        if (is_numeric($parcelas)) {
+            $this->gerarParcelasAutomaticas($venda, (int)$parcelas, $total);
+        }
+        // Se parcelas é um array (parcelas específicas)
+        elseif (is_array($parcelas)) {
+            $this->gerarParcelasEspecificas($venda, $parcelas);
+        }
+        else {
+            // Fallback: gerar 1 parcela
+            $this->gerarParcelasAutomaticas($venda, 1, $total);
+        }
+    }
+
+    /**
+     * Gera parcelas automaticamente dividindo o valor total
+     */
+    private function gerarParcelasAutomaticas(Venda $venda, int $quantidadeParcelas, float $total): void
     {
         if ($quantidadeParcelas < 1) $quantidadeParcelas = 1;
 
@@ -94,6 +126,19 @@ class VendaService
             $venda->parcelas()->create([
                 'vencimento' => now()->addMonths($i),
                 'valor' => ($i === $quantidadeParcelas) ? $ultimaParcelaValor : $valorParcela,
+            ]);
+        }
+    }
+
+    /**
+     * Gera parcelas específicas baseadas no array fornecido
+     */
+    private function gerarParcelasEspecificas(Venda $venda, array $parcelas): void
+    {
+        foreach ($parcelas as $parcela) {
+            $venda->parcelas()->create([
+                'vencimento' => $parcela['vencimento'],
+                'valor' => $parcela['valor'],
             ]);
         }
     }
@@ -137,6 +182,45 @@ class VendaService
 
         if (!empty($erros)) {
             throw new \Exception(implode(' | ', $erros));
+        }
+    }
+
+    /**
+     * Ajusta parcelas proporcionalmente quando o total da venda muda
+     */
+    private function ajustarParcelasProporcionalmente(Venda $venda, array $parcelasOriginais, float $novoTotal): void
+    {
+        if (empty($parcelasOriginais)) {
+            // Se não há parcelas originais, usar o método padrão
+            $this->gerarParcelas($venda, count($parcelasOriginais) ?: 1, $novoTotal);
+            return;
+        }
+
+        $totalOriginal = array_sum(array_column($parcelasOriginais, 'valor'));
+        
+        if ($totalOriginal <= 0) {
+            // Se o total original é zero, dividir igualmente
+            $this->gerarParcelas($venda, count($parcelasOriginais), $novoTotal);
+            return;
+        }
+
+        $fatorProporcional = $novoTotal / $totalOriginal;
+        $somaAjustada = 0;
+
+        foreach ($parcelasOriginais as $index => $parcela) {
+            $valorAjustado = round($parcela['valor'] * $fatorProporcional, 2);
+            
+            // Se é a última parcela, ajustar para fechar o total exato
+            if ($index === count($parcelasOriginais) - 1) {
+                $valorAjustado = round($novoTotal - $somaAjustada, 2);
+            }
+
+            $venda->parcelas()->create([
+                'vencimento' => $parcela['vencimento'],
+                'valor' => $valorAjustado,
+            ]);
+
+            $somaAjustada += $valorAjustado;
         }
     }
 }

@@ -85,13 +85,32 @@ class VendaController extends Controller
         try {
             $dados = $request->validated();
 
+            // Filtrar apenas itens com quantidade preenchida
             $dados['itens'] = array_values(array_filter($dados['itens'], function ($item) {
                 return isset($item['quantidade']) && $item['quantidade'] > 0;
             }));
 
-            $dados['parcelas'] = array_values(array_filter($dados['parcelas'], function ($parcela) {
-                return isset($parcela['valor']) && isset($parcela['vencimento']);
-            }));
+            if (empty($dados['itens'])) {
+                return back()->withErrors(['itens' => 'Selecione ao menos um produto com quantidade válida.'])->withInput();
+            }
+
+            // Se não há array de parcelas (formulário simples), usar quantidade_parcelas
+            if (!isset($dados['parcelas']) || empty($dados['parcelas'])) {
+                $quantidadeParcelas = $dados['quantidade_parcelas'] ?? 1;
+                $dados['parcelas'] = $quantidadeParcelas;
+            } else {
+                // Se há array de parcelas (formulário avançado), filtrar parcelas válidas
+                $dados['parcelas'] = array_values(array_filter($dados['parcelas'], function ($parcela) {
+                    return isset($parcela['valor']) && isset($parcela['vencimento']) && 
+                           $parcela['valor'] > 0;
+                }));
+                
+                // Se não sobrou nenhuma parcela válida, usar quantidade_parcelas
+                if (empty($dados['parcelas'])) {
+                    $quantidadeParcelas = $dados['quantidade_parcelas'] ?? 1;
+                    $dados['parcelas'] = $quantidadeParcelas;
+                }
+            }
 
             $vendaService->atualizarVenda($venda, $dados);
 
@@ -102,14 +121,15 @@ class VendaController extends Controller
         }
     }
 
-    public function destroy(Venda $venda)
+    public function destroy(Venda $venda, VendaService $vendaService)
     {
-        if ($venda->exists()) {
-            $venda->parcelas()->delete();
-            $venda->itens()->delete();
-            $venda->delete();
-        }
+        try {
+            $vendaService->cancelarVenda($venda);
 
-        return redirect()->route('vendas.index')->with('success', 'Venda excluída com sucesso!');
+            return redirect()->route('vendas.index')->with('success', 'Venda cancelada e estoque restaurado com sucesso!');
+        } catch (\Throwable $e) {
+            report($e);
+            return back()->withErrors(['error' => 'Erro ao cancelar venda: ' . $e->getMessage()]);
+        }
     }
 }
