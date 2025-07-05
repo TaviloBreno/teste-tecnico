@@ -6,7 +6,7 @@ Um sistema web completo e moderno para **gestão de vendas**, com controle de cl
 
 ## 🚀 Funcionalidades Principais
 
-### 💼 **Evita Erros Comuns de Desenvolvimento**
+### 💼 **Funcionalidades Gerais**
 - ✅ **Persistência robusta**: Salva corretamente no banco com transações
 - ✅ **Migrations completas**: Estrutura de banco versionada e consistente
 - ✅ **Relacionamentos corretos**: Parcelas ligadas às vendas (não vendas separadas)
