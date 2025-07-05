@@ -10,9 +10,9 @@
             <div class="bg-white shadow-xl rounded-lg p-8 space-y-6">
 
                 <div class="text-sm text-gray-700">
-                    <p><strong>Cliente:</strong> {{ $venda->cliente->nome }}</p>
+                    <p><strong>Cliente:</strong> {{ $venda->cliente->nome ?? 'N/A' }}</p>
                     <p><strong>Data:</strong> {{ $venda->created_at->format('d/m/Y H:i') }}</p>
-                    <p><strong>Total:</strong> R$ {{ number_format($venda->total, 2, ',', '.') }}</p>
+                    <p><strong>Total:</strong> R$ {{ number_format($venda->valor_total, 2, ',', '.') }}</p>
                 </div>
 
                 <hr class="my-4">
@@ -26,6 +26,24 @@
                         </li>
                     @endforeach
                 </ul>
+
+                <hr class="my-4">
+
+                <h3 class="text-lg font-bold text-gray-900 mb-2">Parcelas</h3>
+                @if($venda->parcelas->count())
+                    <ul class="space-y-2">
+                        @foreach ($venda->parcelas as $index => $parcela)
+                            <li class="flex justify-between text-sm text-gray-800 border-b pb-1">
+                                <span>
+                                    {{ ($index + 1) }}ª Parcela - Vencimento: {{ \Carbon\Carbon::parse($parcela->vencimento)->format('d/m/Y') }}
+                                </span>
+                                <span>Valor: R$ {{ number_format($parcela->valor, 2, ',', '.') }}</span>
+                            </li>
+                        @endforeach
+                    </ul>
+                @else
+                    <p class="text-sm text-gray-500">Esta venda não possui parcelas registradas.</p>
+                @endif
 
                 <div class="mt-6">
                     <a href="{{ route('vendas.index') }}"

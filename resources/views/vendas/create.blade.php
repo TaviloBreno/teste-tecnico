@@ -87,9 +87,10 @@
                                     @foreach ($produtos as $index => $produto)
                                         <tr class="hover:bg-gray-50">
                                             <td class="px-2 py-2">
-                                                <input type="checkbox" name="produtos_selecionados[]" value="{{ $produto->id }}"
-                                                    class="rounded text-indigo-600 focus:ring-indigo-500"
-                                                    onchange="toggleProduto({{ $index }}, {{ $produto->id }})">
+                                                <input type="checkbox"
+                                                    class="produto-checkbox rounded text-indigo-600 focus:ring-indigo-500"
+                                                    data-index="{{ $index }}"
+                                                    onchange="toggleProduto({{ $index }})">
                                             </td>
                                             <td class="px-2 py-2 text-gray-800">{{ $produto->nome }}</td>
                                             <td class="px-2 py-2 text-gray-600">R$ {{ number_format($produto->preco, 2, ',', '.') }}</td>
@@ -126,12 +127,13 @@
         </div>
     </div>
 
+    {{-- Script de ativação do campo de quantidade --}}
     <script>
-        function toggleProduto(index, produtoId) {
-            const checkbox = document.querySelector(`input[value="${produtoId}"]`);
+        function toggleProduto(index) {
+            const checkbox = document.querySelector(`.produto-checkbox[data-index="${index}"]`);
             const quantidadeInput = document.getElementById(`quantidade_${index}`);
-            
-            if (checkbox.checked) {
+
+            if (checkbox && checkbox.checked) {
                 quantidadeInput.disabled = false;
                 quantidadeInput.required = true;
                 quantidadeInput.value = '1';
